@@ -1,4 +1,5 @@
 import { Component } from 'react';
+// import { IconName } from 'react-icons/im';
 import css from './SearchBar.module.css';
 
 export class SearchBar extends Component {
@@ -12,7 +13,15 @@ export class SearchBar extends Component {
 
   handleSubmitName = event => {
     event.preventDefault();
+    console.log(event.target[1].value);
+
+    if (this.state.name.trim() === '') {
+      alert('Insert name');
+      return;
+    }
     this.props.onSubmit(this.state.name);
+    this.setState({ name: '' });
+    event.target[1].value = '';
   };
 
   render() {

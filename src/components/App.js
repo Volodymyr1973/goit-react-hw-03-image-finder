@@ -4,6 +4,7 @@ import { ImageGallery } from './imagegallery/ImageGallery';
 import { ImageGalleryItem } from './imagegalleryitem/ImageGalleryItem';
 import { Button } from './button/Button';
 import { Loader } from './loader/Loader';
+import { Modal } from './modal/Modal';
 import css from './App.module.css';
 // import { Modal } from './modal/Modal';
 // import { Dna } from 'react-loader-spinner';
@@ -15,43 +16,43 @@ export class App extends Component {
     page: 1,
     isLoader: false,
     isLoadMore: false,
+    error: '',
   };
 
   handleImageName = nameSearch => {
-    console.log(nameSearch);
-    this.setState(() => ({ name: nameSearch }));
-
-    this.handleSearchImage();
+    this.setState({ name: nameSearch.toLowerCase() });
   };
 
-  handleSearchImage() {
+  // handleImageName = event => {
+  //   event.preventDefault();
+  //   console.log(event);
+  //   console.dir(event.target[1].value);
+  //   this.setState({ name: event.target[1].value });
+
+  //   this.handleSearchImage();
+  // };
+
+  handleSearchImage = () => {
     this.setState({ isLoader: true });
     this.setState({ isLoadMore: true });
+  };
 
-    console.log(this.state.name);
-    if (this.state.name.trim() !== '') {
-      fetch(
-        `https://pixabay.com/api/?q=${this.state.name}&page=${this.state.page}&key=30855873-a6914290544a804f7a5292a28&image_type=photo&orientation=horizontal&per_page=12`
-      )
-        .then(response => response.json())
-        .then(gallery =>
-          this.setState(prevState => ({
-            gallery: [...prevState.gallery, ...gallery.hits],
-          }))
-        )
-        .catch(error => error.message)
-        .finally(this.setState({ isLoader: false }));
+  handleModalOpen = event => {
+    this.setState({ isModalOpen: true });
+    this.setState(() => ({ url: event.target.dataset.large }));
+    this.setState(() => ({ tag: event.target.dataset.tags }));
+  };
 
-      console.log(this.state.gallery);
-    }
-  }
+  handleModalClose = event => {
+    console.dir(event);
+    this.setState({ isModalOpen: false });
+  };
 
   handleLoadMore = () => {
-    console.log(this.state.page);
     this.setState(prevState => ({
       page: prevState.page + 1,
     }));
-    this.handleSearchImage();
+    console.log(this.state.page);
   };
 
   render() {
@@ -59,12 +60,24 @@ export class App extends Component {
       <div className={css.wrapper}>
         <SearchBar onSubmit={this.handleImageName} />
         {this.state.isLoader && <Loader />}
-        {this.state.gallery.length > 0 && (
-          <ImageGallery gallery={this.state.gallery}>
-            <ImageGalleryItem />
-          </ImageGallery>
+
+        <ImageGallery
+          name={this.state.name}
+          page={this.state.page}
+          close={this.handleModalClose}
+          open={this.handleModalOpen}
+          isLoadMore={this.state.isLoadMore}
+        >
+          <ImageGalleryItem />
+          <Modal close={this.handleModalClose} open={this.handleModalOpen} />
+        </ImageGallery>
+
+        {this.state.isLoadMore && (
+          <Button
+            loadMore={this.handleLoadMore}
+            isLoadMore={this.state.isLoadMore}
+          />
         )}
-        {this.state.isLoadMore && <Button loadMore={this.handleLoadMore} />}
 
         {/* <Modal /> */}
       </div>

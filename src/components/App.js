@@ -5,6 +5,8 @@ import { ImageGalleryItem } from './imagegalleryitem/ImageGalleryItem';
 import { Button } from './button/Button';
 import { Loader } from './loader/Loader';
 import css from './App.module.css';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export class App extends Component {
   state = {
@@ -19,7 +21,7 @@ export class App extends Component {
   };
 
   handleImageName = nameSearch => {
-    this.setState({ name: nameSearch.toLowerCase() });
+    this.setState({ name: nameSearch.toLowerCase(), gallery: [] });
   };
 
   handleLoad = () => {
@@ -55,7 +57,6 @@ export class App extends Component {
     return (
       <div className={css.wrapper}>
         <SearchBar onSubmit={this.handleImageName} />
-        {this.state.isLoader && <Loader isLoader={this.state.isLoader} />}
 
         <ImageGallery
           name={this.state.name}
@@ -73,7 +74,19 @@ export class App extends Component {
         >
           <ImageGalleryItem open={this.handleModalOpen} />
         </ImageGallery>
-
+        {this.state.isLoader && <Loader isLoader={this.state.isLoader} />}
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
         {this.state.isLoadMore && (
           <Button
             loadMore={this.handleLoadMore}

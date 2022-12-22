@@ -67,7 +67,7 @@ export class ImageGallery extends Component {
 
 ImageGallery.propTypes = {
   name: PropTypes.string,
-  page: PropTypes.string,
+  page: PropTypes.number,
   load: PropTypes.func,
   loadEnd: PropTypes.func,
   isLoadMore: PropTypes.bool,

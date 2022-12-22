@@ -1,5 +1,7 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 // import { IconName } from 'react-icons/im';
+import { toast } from 'react-toastify';
 import css from './SearchBar.module.css';
 
 export class SearchBar extends Component {
@@ -13,10 +15,10 @@ export class SearchBar extends Component {
 
   handleSubmitName = event => {
     event.preventDefault();
-    console.log(event.target[1].value);
 
     if (this.state.name.trim() === '') {
-      alert('Insert name');
+      // alert('Insert name');
+      toast.error('Insert name');
       return;
     }
     this.props.onSubmit(this.state.name);
@@ -45,3 +47,7 @@ export class SearchBar extends Component {
     );
   }
 }
+
+SearchBar.propTypes = {
+  onSubmit: PropTypes.func,
+};

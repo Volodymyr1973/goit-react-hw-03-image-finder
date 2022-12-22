@@ -14,9 +14,12 @@ export class App extends Component {
     name: '',
     gallery: [],
     page: 1,
+    isModalOpen: false,
     isLoader: false,
     isLoadMore: false,
     error: '',
+    url: '',
+    tag: '',
   };
 
   handleImageName = nameSearch => {
@@ -32,12 +35,17 @@ export class App extends Component {
   //   this.handleSearchImage();
   // };
 
-  handleSearchImage = () => {
+  handleLoad = () => {
     this.setState({ isLoader: true });
+  };
+
+  handleLoadEnd = () => {
     this.setState({ isLoadMore: true });
+    this.setState({ isLoader: false });
   };
 
   handleModalOpen = event => {
+    console.log('modal');
     this.setState({ isModalOpen: true });
     this.setState(() => ({ url: event.target.dataset.large }));
     this.setState(() => ({ tag: event.target.dataset.tags }));
@@ -59,17 +67,33 @@ export class App extends Component {
     return (
       <div className={css.wrapper}>
         <SearchBar onSubmit={this.handleImageName} />
-        {this.state.isLoader && <Loader />}
+        {this.state.isLoader && <Loader isLoader={this.state.isLoader} />}
 
         <ImageGallery
           name={this.state.name}
           page={this.state.page}
           close={this.handleModalClose}
           open={this.handleModalOpen}
+          load={this.handleLoad}
+          loadEnd={this.handleLoadEnd}
           isLoadMore={this.state.isLoadMore}
+          isLoader={this.state.isLoader}
         >
-          <ImageGalleryItem />
-          <Modal close={this.handleModalClose} open={this.handleModalOpen} />
+          <ImageGalleryItem
+            name={this.state.name}
+            page={this.state.page}
+            close={this.handleModalClose}
+            open={this.handleModalOpen}
+            isLoadMore={this.state.isLoadMore}
+          />
+          {this.state.isModalOpen && (
+            <Modal
+              close={this.handleModalClose}
+              open={this.handleModalOpen}
+              url={this.state.url}
+              tag={this.state.tag}
+            />
+          )}
         </ImageGallery>
 
         {this.state.isLoadMore && (

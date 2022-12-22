@@ -8,7 +8,7 @@ export class ImageGalleryItem extends Component {
     return (
       <li
         className={css.gallery__item}
-        onClick={this.props.open}
+        onClick={this.props.modalOpen}
         key={nanoid()}
       >
         <img

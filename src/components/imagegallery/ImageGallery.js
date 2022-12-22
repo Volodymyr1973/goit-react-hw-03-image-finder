@@ -1,26 +1,15 @@
+import { Component } from 'react';
+import PropTypes from 'prop-types';
+import { nanoid } from 'nanoid';
+import { Modal } from 'components/modal/Modal';
 import { ImageGalleryItem } from 'components/imagegalleryitem/ImageGalleryItem';
 import css from './ImageGallery.module.css';
-import { Component } from 'react';
-import { Modal } from 'components/modal/Modal';
 
 export class ImageGallery extends Component {
   state = {
     gallery: [],
-    // isModalOpen: false,
-    // url: '',
-    // tag: '',
+    error: '',
   };
-
-  // handleModalOpen = event => {
-  //   this.setState({ isModalOpen: true });
-  //   this.setState(() => ({ url: event.target.dataset.large }));
-  //   this.setState(() => ({ tag: event.target.dataset.tags }));
-  // };
-
-  // handleModalClose = event => {
-  //   console.dir(event);
-  //   this.setState({ isModalOpen: false });
-  // };
 
   componentDidUpdate(prevProps, prevState) {
     if (
@@ -56,6 +45,7 @@ export class ImageGallery extends Component {
           {this.state.gallery !== [] &&
             this.state.gallery.map(image => (
               <ImageGalleryItem
+                key={nanoid()}
                 modalOpen={this.props.open}
                 webformatURL={image.webformatURL}
                 tags={image.tags}
@@ -74,3 +64,18 @@ export class ImageGallery extends Component {
     );
   }
 }
+
+ImageGallery.propTypes = {
+  name: PropTypes.string,
+  page: PropTypes.string,
+  load: PropTypes.func,
+  loadEnd: PropTypes.func,
+  isLoadMore: PropTypes.bool,
+  isLoader: PropTypes.bool,
+  open: PropTypes.func,
+  isModalOpen: PropTypes.bool,
+  close: PropTypes.func,
+  closeKey: PropTypes.func,
+  url: PropTypes.string,
+  tag: PropTypes.string,
+};

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import css from './Modal.module.css';
 
 export const Modal = ({ imgRef, tag, onClick }) => {
@@ -8,4 +9,10 @@ export const Modal = ({ imgRef, tag, onClick }) => {
       </div>
     </div>
   );
+};
+
+Modal.propTypes = {
+  imgRef: PropTypes.string,
+  tag: PropTypes.string,
+  onClick: PropTypes.func,
 };

@@ -4,10 +4,7 @@ import { ImageGallery } from './imagegallery/ImageGallery';
 import { ImageGalleryItem } from './imagegalleryitem/ImageGalleryItem';
 import { Button } from './button/Button';
 import { Loader } from './loader/Loader';
-import { Modal } from './modal/Modal';
 import css from './App.module.css';
-// import { Modal } from './modal/Modal';
-// import { Dna } from 'react-loader-spinner';
 
 export class App extends Component {
   state = {
@@ -17,7 +14,6 @@ export class App extends Component {
     isModalOpen: false,
     isLoader: false,
     isLoadMore: false,
-    error: '',
     url: '',
     tag: '',
   };
@@ -26,33 +22,26 @@ export class App extends Component {
     this.setState({ name: nameSearch.toLowerCase() });
   };
 
-  // handleImageName = event => {
-  //   event.preventDefault();
-  //   console.log(event);
-  //   console.dir(event.target[1].value);
-  //   this.setState({ name: event.target[1].value });
-
-  //   this.handleSearchImage();
-  // };
-
   handleLoad = () => {
     this.setState({ isLoader: true });
+    setTimeout(() => {
+      this.setState({ isLoadMore: true });
+    }, 2000);
   };
 
   handleLoadEnd = () => {
-    this.setState({ isLoadMore: true });
     this.setState({ isLoader: false });
   };
 
   handleModalOpen = event => {
-    console.log('modal');
-    this.setState({ isModalOpen: true });
-    this.setState(() => ({ url: event.target.dataset.large }));
-    this.setState(() => ({ tag: event.target.dataset.tags }));
+    this.setState(() => ({
+      isModalOpen: true,
+      url: event.target.dataset.large,
+      tag: event.target.dataset.tag,
+    }));
   };
 
   handleModalClose = event => {
-    console.dir(event);
     this.setState({ isModalOpen: false });
   };
 
@@ -60,7 +49,6 @@ export class App extends Component {
     this.setState(prevState => ({
       page: prevState.page + 1,
     }));
-    console.log(this.state.page);
   };
 
   render() {
@@ -72,28 +60,18 @@ export class App extends Component {
         <ImageGallery
           name={this.state.name}
           page={this.state.page}
-          close={this.handleModalClose}
-          open={this.handleModalOpen}
           load={this.handleLoad}
           loadEnd={this.handleLoadEnd}
           isLoadMore={this.state.isLoadMore}
           isLoader={this.state.isLoader}
+          open={this.handleModalOpen}
+          isModalOpen={this.state.isModalOpen}
+          close={this.handleModalClose}
+          closeKey={this.handleKeyModalClose}
+          url={this.state.url}
+          tag={this.state.tag}
         >
-          <ImageGalleryItem
-            name={this.state.name}
-            page={this.state.page}
-            close={this.handleModalClose}
-            open={this.handleModalOpen}
-            isLoadMore={this.state.isLoadMore}
-          />
-          {this.state.isModalOpen && (
-            <Modal
-              close={this.handleModalClose}
-              open={this.handleModalOpen}
-              url={this.state.url}
-              tag={this.state.tag}
-            />
-          )}
+          <ImageGalleryItem open={this.handleModalOpen} />
         </ImageGallery>
 
         {this.state.isLoadMore && (
@@ -102,8 +80,6 @@ export class App extends Component {
             isLoadMore={this.state.isLoadMore}
           />
         )}
-
-        {/* <Modal /> */}
       </div>
     );
   }

@@ -7,7 +7,6 @@ import css from './ImageGallery.module.css';
 
 export class ImageGallery extends Component {
   state = {
-    gallery: [],
     error: '',
   };
 
@@ -17,6 +16,7 @@ export class ImageGallery extends Component {
       prevProps.page !== this.props.page
     ) {
       this.props.load();
+
       setTimeout(() => {
         fetch(
           `https://pixabay.com/api/?q=${this.props.name}&page=${this.props.page}&key=30855873-a6914290544a804f7a5292a28&image_type=photo&orientation=horizontal&per_page=12`
@@ -27,10 +27,11 @@ export class ImageGallery extends Component {
             }
             return Promise.reject(new Error('Insert other name'));
           })
-          .then(gallery =>
-            this.setState(prevState => ({
-              gallery: [...prevState.gallery, ...gallery.hits],
-            }))
+          .then(
+            gallery => this.props.onGallery(gallery)
+            // this.setState(prevState => ({
+            //   gallery: [...prevState.gallery, ...gallery.hits],
+            // }))
           )
           .catch(error => this.setState({ error }))
           .finally(this.props.loadEnd());
@@ -42,8 +43,8 @@ export class ImageGallery extends Component {
     return (
       <>
         <ul className={css.image__gallery}>
-          {this.state.gallery !== [] &&
-            this.state.gallery.map(image => (
+          {this.props.gallery !== [] &&
+            this.props.gallery.map(image => (
               <ImageGalleryItem
                 key={nanoid()}
                 modalOpen={this.props.open}
@@ -68,6 +69,8 @@ export class ImageGallery extends Component {
 ImageGallery.propTypes = {
   name: PropTypes.string,
   page: PropTypes.number,
+  gallery: PropTypes.array,
+  onGallery: PropTypes.func,
   load: PropTypes.func,
   loadEnd: PropTypes.func,
   isLoadMore: PropTypes.bool,
@@ -75,7 +78,6 @@ ImageGallery.propTypes = {
   open: PropTypes.func,
   isModalOpen: PropTypes.bool,
   close: PropTypes.func,
-  closeKey: PropTypes.func,
   url: PropTypes.string,
   tag: PropTypes.string,
 };

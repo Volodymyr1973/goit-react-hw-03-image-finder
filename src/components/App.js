@@ -21,7 +21,13 @@ export class App extends Component {
   };
 
   handleImageName = nameSearch => {
-    this.setState({ name: nameSearch.toLowerCase(), gallery: [] });
+    this.setState({ name: nameSearch.toLowerCase(), page: 1, gallery: [] });
+  };
+
+  handleGallery = gallery => {
+    this.setState(prevState => ({
+      gallery: [...prevState.gallery, ...gallery.hits],
+    }));
   };
 
   handleLoad = () => {
@@ -61,6 +67,8 @@ export class App extends Component {
         <ImageGallery
           name={this.state.name}
           page={this.state.page}
+          gallery={this.state.gallery}
+          onGallery={this.handleGallery}
           load={this.handleLoad}
           loadEnd={this.handleLoadEnd}
           isLoadMore={this.state.isLoadMore}
@@ -68,7 +76,6 @@ export class App extends Component {
           open={this.handleModalOpen}
           isModalOpen={this.state.isModalOpen}
           close={this.handleModalClose}
-          closeKey={this.handleKeyModalClose}
           url={this.state.url}
           tag={this.state.tag}
         >

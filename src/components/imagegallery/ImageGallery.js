@@ -1,8 +1,8 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { nanoid } from 'nanoid';
-import { Modal } from 'components/Modal/Modal';
-import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
+import { Modal } from 'components/modal/Modal';
+import { ImageGalleryItem } from 'components/imagegalleryitem/ImageGalleryItem';
 import css from './ImageGallery.module.css';
 
 export class ImageGallery extends Component {

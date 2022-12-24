@@ -60,7 +60,6 @@ export class App extends Component {
   };
 
   handleModalOpen = event => {
-    console.log(event);
     this.setState(() => ({
       isModalOpen: true,
       url: event.target.dataset.large,
@@ -70,7 +69,6 @@ export class App extends Component {
   };
 
   handleModalClose = event => {
-    console.log(event);
     if (event.key === 'Escape' || event.type === 'click') {
       this.setState({ isModalOpen: false });
       document.removeEventListener('keydown', this.handleModalClose);

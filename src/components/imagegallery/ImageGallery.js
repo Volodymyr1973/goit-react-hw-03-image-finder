@@ -1,20 +1,41 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { nanoid } from 'nanoid';
-import { Modal } from 'components/Modal/Modal';
-import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
+import { Modal } from 'components/modal/Modal';
+import { ImageGalleryItem } from 'components/imagegalleryitem/ImageGalleryItem';
 import css from './ImageGallery.module.css';
 
 export class ImageGallery extends Component {
+  state = {
+    error: '',
+  };
+
   componentDidUpdate(prevProps, prevState) {
-    const name = this.props.name;
-    const page = this.props.page;
     if (
       prevProps.name !== this.props.name ||
       prevProps.page !== this.props.page
     ) {
       this.props.load();
-      this.props.onFetch(name, page);
+
+      setTimeout(() => {
+        fetch(
+          `https://pixabay.com/api/?q=${this.props.name}&page=${this.props.page}&key=30855873-a6914290544a804f7a5292a28&image_type=photo&orientation=horizontal&per_page=12`
+        )
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            return Promise.reject(new Error('Insert other name'));
+          })
+          .then(
+            gallery => this.props.onGallery(gallery)
+            // this.setState(prevState => ({
+            //   gallery: [...prevState.gallery, ...gallery.hits],
+            // }))
+          )
+          .catch(error => this.setState({ error }))
+          .finally(this.props.loadEnd());
+      }, 1000);
     }
   }
 
@@ -49,8 +70,11 @@ ImageGallery.propTypes = {
   name: PropTypes.string,
   page: PropTypes.number,
   gallery: PropTypes.array,
-  onFetch: PropTypes.func,
+  onGallery: PropTypes.func,
   load: PropTypes.func,
+  loadEnd: PropTypes.func,
+  isLoadMore: PropTypes.bool,
+  isLoader: PropTypes.bool,
   open: PropTypes.func,
   isModalOpen: PropTypes.bool,
   close: PropTypes.func,

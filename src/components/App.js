@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { SearchBar } from './searchbar/SearchBar';
-import { ImageGallery } from './imagegallery/ImageGallery';
-import { ImageGalleryItem } from './imagegalleryitem/ImageGalleryItem';
-import { Button } from './button/Button';
-import { Loader } from './loader/Loader';
+import { SearchBar } from './SearchBar/SearchBar';
+import { ImageGallery } from './ImageGallery/ImageGallery';
+// import { ImageGalleryItem } from './imagegalleryitem/ImageGalleryItem';
+import { Button } from './Button/Button';
+import { Loader } from './Loader/Loader';
 import css from './App.module.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -18,6 +18,7 @@ export class App extends Component {
     isLoadMore: false,
     url: '',
     tag: '',
+    eroor: '',
   };
 
   handleImageName = nameSearch => {
@@ -30,11 +31,28 @@ export class App extends Component {
     }));
   };
 
+  handleFetch = (name, page) => {
+    setTimeout(() => {
+      fetch(
+        `https://pixabay.com/api/?q=${name}&page=${page}&key=30855873-a6914290544a804f7a5292a28&image_type=photo&orientation=horizontal&per_page=12`
+      )
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+          return Promise.reject(new Error('Insert other name'));
+        })
+        .then(gallery => this.handleGallery(gallery))
+        .catch(error => this.setState({ error }))
+        .finally(this.handleLoadEnd());
+    }, 300);
+  };
+
   handleLoad = () => {
     this.setState({ isLoader: true });
     setTimeout(() => {
       this.setState({ isLoadMore: true });
-    }, 2000);
+    }, 1000);
   };
 
   handleLoadEnd = () => {
@@ -47,10 +65,14 @@ export class App extends Component {
       url: event.target.dataset.large,
       tag: event.target.dataset.tag,
     }));
+    document.addEventListener('keydown', this.handleModalClose);
   };
 
   handleModalClose = event => {
-    this.setState({ isModalOpen: false });
+    if (event.key === 'Escape' || event.type === 'click') {
+      this.setState({ isModalOpen: false });
+      document.removeEventListener('keydown', this.handleModalClose);
+    }
   };
 
   handleLoadMore = () => {
@@ -68,19 +90,14 @@ export class App extends Component {
           name={this.state.name}
           page={this.state.page}
           gallery={this.state.gallery}
-          onGallery={this.handleGallery}
+          onFetch={this.handleFetch}
           load={this.handleLoad}
-          loadEnd={this.handleLoadEnd}
-          isLoadMore={this.state.isLoadMore}
-          isLoader={this.state.isLoader}
-          open={this.handleModalOpen}
           isModalOpen={this.state.isModalOpen}
+          open={this.handleModalOpen}
           close={this.handleModalClose}
           url={this.state.url}
           tag={this.state.tag}
-        >
-          <ImageGalleryItem open={this.handleModalOpen} />
-        </ImageGallery>
+        ></ImageGallery>
         {this.state.isLoader && <Loader isLoader={this.state.isLoader} />}
         <ToastContainer
           position="top-right"

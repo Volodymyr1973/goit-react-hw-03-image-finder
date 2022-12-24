@@ -1,18 +1,30 @@
+import { Component } from 'react';
 import PropTypes from 'prop-types';
 import css from './Modal.module.css';
 
-export const Modal = ({ imgRef, tag, onClick }) => {
-  return (
-    <div className={css.overlay} onClick={onClick}>
-      <div className={css.modal}>
-        <img src={imgRef} alt={tag} />
+export class Modal extends Component {
+  componentDidMount() {
+    document.addEventListener('keydown', this.props.close);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.props.close);
+  }
+
+  render() {
+    return (
+      <div className={css.overlay} onClick={this.props.onClick}>
+        <div className={css.modal}>
+          <img src={this.props.url} alt={this.props.tag} />
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 Modal.propTypes = {
-  imgRef: PropTypes.string,
+  url: PropTypes.string,
   tag: PropTypes.string,
   onClick: PropTypes.func,
+  close: PropTypes.func,
 };

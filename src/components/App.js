@@ -4,6 +4,7 @@ import { ImageGallery } from './imagegallery/ImageGallery';
 // import { ImageGalleryItem } from './imagegalleryitem/ImageGalleryItem';
 import { Button } from './button/Button';
 import { Loader } from './loader/Loader';
+import { Modal } from './modal/Modal';
 import css from './App.module.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -26,6 +27,7 @@ export class App extends Component {
   };
 
   handleGallery = gallery => {
+    console.log(gallery.hits);
     this.setState(prevState => ({
       gallery: [...prevState.gallery, ...gallery.hits],
     }));
@@ -45,14 +47,11 @@ export class App extends Component {
         .then(gallery => this.handleGallery(gallery))
         .catch(error => this.setState({ error }))
         .finally(this.handleLoadEnd());
-    }, 300);
+    }, 2000);
   };
 
   handleLoad = () => {
-    this.setState({ isLoader: true });
-    setTimeout(() => {
-      this.setState({ isLoadMore: true });
-    }, 1000);
+    this.setState({ isLoader: true, isLoadMore: true });
   };
 
   handleLoadEnd = () => {
@@ -65,40 +64,56 @@ export class App extends Component {
       url: event.target.dataset.large,
       tag: event.target.dataset.tag,
     }));
-    document.addEventListener('keydown', this.handleModalClose);
   };
 
   handleModalClose = event => {
-    if (event.key === 'Escape' || event.type === 'click') {
+    console.log(event);
+    if (event.key === 'Escape' || event.target.localName === 'div') {
       this.setState({ isModalOpen: false });
-      document.removeEventListener('keydown', this.handleModalClose);
     }
   };
 
   handleLoadMore = () => {
+    // if (this.state.gallery.length < 12) {
+    //   this.setState({ isModalOpen: false });
+    // } else
     this.setState(prevState => ({
       page: prevState.page + 1,
     }));
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevState.name !== this.state.name ||
+      prevState.page !== this.state.page
+    ) {
+      this.handleLoad();
+      this.handleFetch(this.state.name, this.state.page);
+    }
+  }
 
   render() {
     return (
       <div className={css.wrapper}>
         <SearchBar onSubmit={this.handleImageName} />
 
-        <ImageGallery
-          name={this.state.name}
-          page={this.state.page}
-          gallery={this.state.gallery}
-          onFetch={this.handleFetch}
-          load={this.handleLoad}
-          isModalOpen={this.state.isModalOpen}
-          open={this.handleModalOpen}
-          close={this.handleModalClose}
-          url={this.state.url}
-          tag={this.state.tag}
-        ></ImageGallery>
+        {this.state.gallery.length !== 0 && (
+          <ImageGallery
+            gallery={this.state.gallery}
+            open={this.handleModalOpen}
+          ></ImageGallery>
+        )}
         {this.state.isLoader && <Loader isLoader={this.state.isLoader} />}
+
+        {this.state.isModalOpen && (
+          <Modal
+            url={this.state.url}
+            tag={this.state.tag}
+            onClick={this.handleModalClose}
+            close={this.handleModalClose}
+          />
+        )}
+
         <ToastContainer
           position="top-right"
           autoClose={5000}
@@ -111,12 +126,7 @@ export class App extends Component {
           pauseOnHover
           theme="colored"
         />
-        {this.state.isLoadMore && (
-          <Button
-            loadMore={this.handleLoadMore}
-            isLoadMore={this.state.isLoadMore}
-          />
-        )}
+        {this.state.isLoadMore && <Button loadMore={this.handleLoadMore} />}
       </div>
     );
   }

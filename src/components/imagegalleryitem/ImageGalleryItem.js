@@ -7,7 +7,7 @@ import css from './ImageGalleryItem.module.css';
 export class ImageGalleryItem extends Component {
   render() {
     return (
-      <li className={css.gallery__item} onClick={this.props.modalOpen}>
+      <li className={css.gallery__item} onClick={this.props.open}>
         <img
           src={this.props.webformatURL}
           alt={this.props.tags}
@@ -21,7 +21,7 @@ export class ImageGalleryItem extends Component {
 }
 
 ImageGalleryItem.propTypes = {
-  modalOpen: PropTypes.func,
+  open: PropTypes.func,
   webformatURL: PropTypes.string,
   tags: PropTypes.string,
   largeImageURL: PropTypes.string,

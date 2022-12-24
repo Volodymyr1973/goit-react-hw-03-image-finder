@@ -31,6 +31,9 @@ export class App extends Component {
     this.setState(prevState => ({
       gallery: [...prevState.gallery, ...gallery.hits],
     }));
+    if (gallery.hits.length < 12) {
+      this.setState({ isLoadMore: false });
+    }
   };
 
   handleFetch = (name, page) => {
@@ -47,15 +50,15 @@ export class App extends Component {
         .then(gallery => this.handleGallery(gallery))
         .catch(error => this.setState({ error }))
         .finally(this.handleLoadEnd());
-    }, 2000);
+    }, 1000);
   };
 
   handleLoad = () => {
-    this.setState({ isLoader: true, isLoadMore: true });
+    this.setState({ isLoader: true });
   };
 
   handleLoadEnd = () => {
-    this.setState({ isLoader: false });
+    this.setState({ isLoader: false, isLoadMore: true });
   };
 
   handleModalOpen = event => {

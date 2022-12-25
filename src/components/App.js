@@ -37,20 +37,18 @@ export class App extends Component {
   };
 
   handleFetch = (name, page) => {
-    setTimeout(() => {
-      fetch(
-        `https://pixabay.com/api/?q=${name}&page=${page}&key=30855873-a6914290544a804f7a5292a28&image_type=photo&orientation=horizontal&per_page=12`
-      )
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          }
-          return Promise.reject(new Error('Insert other name'));
-        })
-        .then(gallery => this.handleGallery(gallery))
-        .catch(error => this.setState({ error }))
-        .finally(this.handleLoadEnd());
-    }, 1000);
+    fetch(
+      `https://pixabay.com/api/?q=${name}&page=${page}&key=30855873-a6914290544a804f7a5292a28&image_type=photo&orientation=horizontal&per_page=12`
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        return Promise.reject(new Error('Insert other name'));
+      })
+      .then(gallery => this.handleGallery(gallery))
+      .catch(error => this.setState({ error }))
+      .finally(this.handleLoadEnd());
   };
 
   handleLoad = () => {

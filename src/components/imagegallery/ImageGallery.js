@@ -9,7 +9,7 @@ export const ImageGallery = ({ gallery, open }) => {
   return (
     <>
       <ul className={css.image__gallery}>
-        {gallery !== [] &&
+        {gallery.length > 0 &&
           gallery.map(image => (
             <ImageGalleryItem
               key={nanoid()}
